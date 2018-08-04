@@ -5,6 +5,7 @@ using UnityEngine;
 public class NautilusScript : MonoBehaviour {
 
     public Rigidbody NautilusRigidbody;
+    public int NautilusSpeedLevel = 0;
 	// Use this for initialization
 	void Start () {
 		
@@ -17,6 +18,7 @@ public class NautilusScript : MonoBehaviour {
 
     private void FixedUpdate()
     {
+        NautilusSpeedLevelController();
         ForwardMomentum();
     }
 
@@ -26,13 +28,56 @@ public class NautilusScript : MonoBehaviour {
         transform.Rotate(0, 0, Input.GetAxis("Horizontal") * Time.deltaTime * SubRotationSpeed);
     }
 
+    void NautilusSpeedLevelController()
+    {
+        if (Input.GetKeyDown(KeyCode.W))
+        {
+            NautilusSpeedLevel++;
+        }
+        else if (Input.GetKeyDown(KeyCode.S))
+        {
+            NautilusSpeedLevel--;
+        }
+        NautilusSpeedCapChecker();
+        print(NautilusSpeedLevel);
+    }
+
+    void NautilusSpeedCapChecker()
+    {
+        if (NautilusSpeedLevel > 2)
+        {
+            NautilusSpeedLevel = 2;
+        }
+        else if (NautilusSpeedLevel < -1)
+        {
+            NautilusSpeedLevel = -1;
+        }
+    }
+
+    //Sets the acceleration of 
     void ForwardMomentum()
     {
-        float ForwardForce = 0.1f;
-        if (NautilusRigidbody.velocity.z <= 10)
+        float forwardForce = 0.75f;
+        float calculatedForce = 0;
+        switch (NautilusSpeedLevel)
         {
-            NautilusRigidbody.AddForce(0, 0, ForwardForce * Input.GetAxis("Vertical") * -1, ForceMode.Impulse);
+            case 2:
+                calculatedForce = forwardForce * 1.2f;
+                NautilusRigidbody.AddRelativeForce(0, calculatedForce, 0, ForceMode.Impulse);
+                break;
+            case 1:
+                NautilusRigidbody.AddRelativeForce(0, forwardForce, 0, ForceMode.Impulse);
+                break;
+            case 0:
+                NautilusRigidbody.velocity = new Vector3(0, 0, 0);
+                NautilusRigidbody.drag = 0.00001f;
+                break;
+            case -1:
+                calculatedForce = forwardForce * -1;
+                NautilusRigidbody.AddRelativeForce(0, calculatedForce, 0, ForceMode.Impulse);
+                break;
+            default:
+                break;
         }
-        
     }
 }
