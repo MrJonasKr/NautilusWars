@@ -14,11 +14,11 @@ public class NautilusScript : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         Rotation();
+        NautilusSpeedLevelController();
 	}
 
     private void FixedUpdate()
     {
-        NautilusSpeedLevelController();
         ForwardMomentum();
     }
 
@@ -69,8 +69,8 @@ public class NautilusScript : MonoBehaviour {
                 NautilusRigidbody.AddRelativeForce(0, forwardForce, 0, ForceMode.Impulse);
                 break;
             case 0:
-                NautilusRigidbody.velocity = new Vector3(0, 0, 0);
-                NautilusRigidbody.drag = 0.00001f;
+                //NautilusRigidbody.velocity = new Vector3(0, 0, 0);
+                NautilusRigidbody.drag = 10f;
                 break;
             case -1:
                 calculatedForce = forwardForce * -1;
